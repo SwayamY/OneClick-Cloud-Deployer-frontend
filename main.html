@@ -107,21 +107,52 @@
     <div class="status" id="status-log"></div>
     <div class="link-output" id="output-link"></div>
 </div>
-
 <script>
+    const COOLDOWN_SECONDS = 180;
+    const deployBtn = document.querySelector("button");
+    const status = document.getElementById('status-log');
+    const output = document.getElementById('output-link');
+
+    function addStatus(msg) {
+        const div = document.createElement('div');
+        div.textContent = msg;
+        status.appendChild(div);
+    }
+
+    function setCooldown(secondsLeft) {
+        deployBtn.disabled = true;
+        const interval = setInterval(() => {
+            if (secondsLeft <= 0) {
+                deployBtn.textContent = "Deploy";
+                deployBtn.disabled = false;
+                localStorage.removeItem('deployCooldown');
+                clearInterval(interval);
+            } else {
+                deployBtn.textContent = `Cooldown: ${secondsLeft}s`;
+                secondsLeft--;
+            }
+        }, 1000);
+    }
+
+    window.onload = () => {
+        const lastDeploy = parseInt(localStorage.getItem('deployCooldown'), 10);
+        const now = Math.floor(Date.now() / 1000);
+        const diff = COOLDOWN_SECONDS - (now - lastDeploy);
+        if (lastDeploy && diff > 0) {
+            setCooldown(diff);
+        }
+    };
+
     async function deployRepo() {
-        const status = document.getElementById('status-log');
-        const output = document.getElementById('output-link');
         const repoUrl = document.getElementById('repo-url').value;
+
+        // Set cooldown start time
+        const now = Math.floor(Date.now() / 1000);
+        localStorage.setItem('deployCooldown', now.toString());
+        setCooldown(COOLDOWN_SECONDS);
 
         status.innerHTML = '';
         output.innerHTML = '';
-
-        const addStatus = (msg) => {
-            const div = document.createElement('div');
-            div.textContent = msg;
-            status.appendChild(div);
-        };
 
         try {
             addStatus("🔁 Starting deployment...");
