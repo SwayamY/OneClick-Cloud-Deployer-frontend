@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oneclick Deployer MVP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        header {
+            background-color: #1f1f1f;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        nav a {
+            color: #a0a0a0;
+            margin-left: 1.5rem;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 8%;
+        }
+
+        input[type="text"] {
+            width: 60%;
+            max-width: 600px;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #2a2a2a;
+            color: white;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #3a86ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2f66cc;
+        }
+
+        .status {
+            margin-top: 30px;
+            font-size: 1rem;
+        }
+
+        .status div {
+            margin: 10px 0;
+        }
+
+        .link-output {
+            margin-top: 20px;
+        }
+
+        .link-output a {
+            color: #00ffae;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Oneclick Deployer MVP</h1>
+    <nav>
+        <a href="intro.html" target="_blank">Intro</a>
+        <a href="https://youtu.be/YOUR_VIDEO_LINK" target="_blank">Explanation Video</a>
+        <a href="https://github.com/SwayamY/sample-docker-multicontainer-for-testing" target="_blank">Sample Repo</a>
+        <a href="https://swayamy.github.io/" target="_blank">Portfolio</a>
+    </nav>
+</header>
+
+<div class="container">
+    <input type="text" id="repo-url" value="https://github.com/SwayamY/sample-docker-multicontainer-for-testing.git">
+    <button onclick="deployRepo()">Deploy</button>
+
+    <div class="status" id="status-log"></div>
+    <div class="link-output" id="output-link"></div>
+</div>
+
+<script>
+    async function deployRepo() {
+        const status = document.getElementById('status-log');
+        const output = document.getElementById('output-link');
+        const repoUrl = document.getElementById('repo-url').value;
+
+        status.innerHTML = '';
+        output.innerHTML = '';
+
+        const addStatus = (msg) => {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            status.appendChild(div);
+        };
+
+        try {
+            addStatus("🔁 Starting deployment...");
+            await new Promise(r => setTimeout(r, 500));
+
+            addStatus("📁 Cloning repository...");
+            await new Promise(r => setTimeout(r, 700));
+
+            const res = await fetch("https://oneclick-cloud-deployer-swayam.duckdns.org/api/clone_repo", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ repo_url: repoUrl })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Something went wrong");
+
+            addStatus("✅ Repository cloned.");
+            await new Promise(r => setTimeout(r, 500));
+
+            addStatus("🔍 Validating docker-compose...");
+            await new Promise(r => setTimeout(r, 700));
+
+            const validationStatus = data.validation?.[0] ? "✅" : "❌";
+            const validationMessage = data.validation?.[1] || "Unknown validation result";
+            addStatus(`${validationStatus} ${validationMessage}`);
+
+            await new Promise(r => setTimeout(r, 500));
+
+            addStatus("⚙️ Setting up VM...");
+            await new Promise(r => setTimeout(r, 1500));
+
+            addStatus(`🖥️ VM Name: ${data.VM_Name || data.VM_Deployment?.vm_name}`);
+            addStatus(`🌐 External IP: ${data.External_IP}`);
+
+            output.innerHTML = `<a href="http://${data.External_IP}" target="_blank">Visit your deployed app</a><br><br>
+                                <em>Note: It may take 1–2 minutes before the app becomes fully live.</em>`;
+
+        } catch (err) {
+            addStatus(`❌ Error: ${err.message}`);
+        }
+    }
+</script>
+
+
+</body>
+</html>

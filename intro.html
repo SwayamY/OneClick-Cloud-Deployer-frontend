@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oneclick Deployer - Intro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    header {
+      background-color: #1f1f1f;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    nav a {
+      color: #a0a0a0;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    nav a:hover {
+      color: #ffffff;
+    }
+
+    .countdown {
+      text-align: center;
+      font-size: 1rem;
+      margin-top: 1rem;
+      color: #00ffae;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: #1e1e1e;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3rem;
+      color: #3a86ff;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #cccccc;
+    }
+
+    .card a {
+      color: #00ffae;
+      text-decoration: underline;
+    }
+
+    footer {
+      margin-top: 4rem;
+      background-color: #1f1f1f;
+      padding: 2rem;
+      text-align: center;
+      color: #cccccc;
+    }
+
+    footer a {
+      color: #3a86ff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Oneclick Deployer MVP</h1>
+  <nav>
+    <a href="main.html" target="_blank">HOME</a>
+    <a href="https://youtu.be/YOUR_VIDEO_LINK" target="_blank">Explanation Video</a>
+    <a href="https://github.com/SwayamY/sample-docker-multicontainer-for-testing" target="_blank">Sample Repo</a>
+    <a href="https://github.com/SwayamY" target="_blank">Portfolio</a>
+  </nav>
+</header>
+
+<div class="countdown">
+  Redirecting to main app in <span id="countdown">90</span> seconds...
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2>🚀 Project Overview</h2>
+    <p>
+      Oneclick Deployer is a minimal-click cloud deployment pipeline. Simply enter the GitHub repository URL containing a <code>docker-compose.yml</code>, click on <strong>Deploy</strong>, and the tool will:
+      <br>1️⃣ Clone the repo → 2️⃣ Validate configuration → 3️⃣ Provision a GCP VM → 4️⃣ Deploy the stack and return a public IP.
+      <br><br>
+      
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Tech Stack & Implementation</h2>
+    <p>
+      The backend is built using <strong>FastAPI</strong> and exposed via <strong>NGINX reverse proxy</strong> configured with <strong>SSL/TLS certificates</strong> generated using Certbot.  
+      <br><br>
+      It leverages <strong>Docker Compose</strong> to orchestrate multi-container environments. All components are containerized and deployed on dynamically created <strong>Google Cloud VM instances</strong>.  
+      <br><br>
+      Repositories are validated server-side to ensure compliance with required structure, including `docker-compose.yml`.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>🔮 Future Vision</h2>
+    <p>
+      Currently released as a working MVP, future versions will include:
+      <ul>
+        <li>💡 VM configuration control (e.g. CPU, RAM)</li>
+        <li>🧠 Dockerfile-only support with validation</li>
+        <li>📦 Optional image-based deployments (no compose needed)</li>
+        <li>📊 Monitoring & resource usage dashboards</li>
+      </ul>
+      This is designed to evolve into a fully featured self-hosted DevOps deployer.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>👔 For Recruiters</h2>
+    <p>
+      This project was independently built as part of my effort to secure a high-impact internship. I am available for <strong>immediate joining</strong> and bring practical experience in cloud deployment, backend development, and DevOps tooling.  
+      <br><br>
+      <a href="#footer">Contact me</a> to discuss opportunities.
+    </p>
+  </div>
+</div>
+
+<footer id="footer">
+  <p>Made by <strong>Swayam</strong></p>
+  <p>Email: <a href="mailto:swayam.y.dev@gmail.com">swayam.y.dev@gmail.com</a></p>
+  <p>Portfolio: <a href="https://swayamy.github.io/" target="_blank">Portfolio</a></p>
+  <p>GitHub Project: <a href="https://github.com/SwayamY" target="_blank">GitHub Profile</a></p>
+</footer>
+
+<script>
+  let seconds = 90;
+  const countdown = document.getElementById("countdown");
+  const interval = setInterval(() => {
+    seconds--;
+    countdown.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(interval);
+      window.location.href = "main.html";
+    }
+  }, 1000);
+</script>
+
+</body>
+</html>
